@@ -20,10 +20,12 @@ public class AthleteService {
 
     private final AthleteRepository athleteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AthleteService(AthleteRepository athleteRepository, PasswordEncoder passwordEncoder) {
+    public AthleteService(AthleteRepository athleteRepository, PasswordEncoder passwordEncoder,JwtService jwtService) {
         this.athleteRepository = athleteRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
     public AthleteResponse saveAthlete(RegisterAthleteRequest request){
         Optional<Athlete> existingAthlete =
@@ -75,7 +77,7 @@ public class AthleteService {
 
     }
 
-    public void login(LoginRequest request){
+    public String login(LoginRequest request){
         Optional<Athlete> existingAthlete =
                 athleteRepository.findByEmail(request.getEmail());
 
@@ -86,6 +88,7 @@ public class AthleteService {
         if(!passwordEncoder.matches(request.getPassword(), athlete.getPasswordHash())){
             throw new InvalidCredentialsException("Invalid email or password");
         }
+        return jwtService.generateToken(athlete.getEmail());
 
     }
 

@@ -35,8 +35,9 @@ public class AthleteController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request) {
-        athleteService.login(request);
-        return ResponseEntity.ok("Login successful");
+        String token = athleteService.login(request);
+
+        return ResponseEntity.ok(token);
     }
 
 }
